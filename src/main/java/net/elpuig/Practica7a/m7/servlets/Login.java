@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import net.elpuig.Practica5.m7.beans.Usuario;
+import net.elpuig.Practica7a.m7.beans.Usuario;
 
 import java.io.IOException;
 
