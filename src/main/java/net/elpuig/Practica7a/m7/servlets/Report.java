@@ -10,13 +10,11 @@ import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncEvent;
 import jakarta.servlet.AsyncListener;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import net.elpuig.Practica7a.m7.beans.Alumno;
-import net.elpuig.Practica7a.m7.jpa.AlumnoDAO;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -36,10 +34,10 @@ import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 import net.sf.jasperreports.web.util.WebHtmlResourceHandler;
 
-@WebServlet("/informe")
 public class Report extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unchecked")
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -67,8 +65,8 @@ public class Report extends HttpServlet {
             @Override
             public void run() {
                 try {
-                    // Obtener la lista de alumnos usando JPA
-                    List<Alumno> listaAlumnos = AlumnoDAO.getAllAlumnos();
+                    // Obtener la lista de alumnos desde la request (enviada por el Controlador)
+                    Collection<Alumno> listaAlumnos = (List<Alumno>) request.getAttribute("lista");
                     
                     // Crear el data source usando JRBeanCollectionDataSource
                     JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listaAlumnos);

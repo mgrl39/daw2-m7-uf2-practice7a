@@ -60,33 +60,86 @@ public class AlumnoDAO {
         }
     }
     
-    @SuppressWarnings("unchecked")
+    public static boolean delete(int id) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Alumno alumno = em.find(Alumno.class, id);
+            if (alumno != null) {
+                em.remove(alumno);
+                tx.commit();
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+    
     public static List<Map<String, String>> executeQueryNative(String sql) {
         EntityManager em = emf.createEntityManager();
         List<Map<String, String>> result = new ArrayList<>();
         
         try {
-            Query query = em.createNativeQuery(sql);
-            List<Object[]> resultList = query.getResultList();
+            // Determine if this is JPQL or SQL native query
+            boolean isJPQL = sql.trim().toUpperCase().startsWith("SELECT") && 
+                             sql.toUpperCase().contains(" FROM ") && 
+                             !sql.contains("*");
             
-            // Get column names from the native query
-            Query columnQuery = em.createNativeQuery("SELECT * FROM (" + sql + ") AS temp LIMIT 0");
-            List<String> columnNames = getColumnNames(sql);
+            Query query;
+            if (isJPQL) {
+                query = em.createQuery(sql);
+            } else {
+                query = em.createNativeQuery(sql);
+            }
             
-            // Convert each row to a map of column name -> value
-            for (Object[] row : resultList) {
-                Map<String, String> rowMap = new HashMap<>();
-                for (int i = 0; i < row.length; i++) {
-                    String columnName = i < columnNames.size() ? columnNames.get(i) : "Column" + i;
-                    rowMap.put(columnName, row[i] != null ? row[i].toString() : "null");
+            List<?> resultList = query.getResultList();
+            
+            // Handle different result types
+            if (!resultList.isEmpty()) {
+                Object first = resultList.get(0);
+                
+                if (first instanceof Object[]) {
+                    // Handle array results (multiple columns)
+                    List<String> columnNames = getColumnNames(sql);
+                    for (Object row : resultList) {
+                        Object[] rowArray = (Object[]) row;
+                        Map<String, String> rowMap = new HashMap<>();
+                        for (int i = 0; i < rowArray.length; i++) {
+                            String columnName = i < columnNames.size() ? columnNames.get(i) : "Column" + i;
+                            rowMap.put(columnName, rowArray[i] != null ? rowArray[i].toString() : "null");
+                        }
+                        result.add(rowMap);
+                    }
+                } else if (first instanceof Alumno) {
+                    // Handle entity results
+                    for (Object obj : resultList) {
+                        Alumno alumno = (Alumno) obj;
+                        Map<String, String> rowMap = new HashMap<>();
+                        rowMap.put("id", String.valueOf(alumno.getId()));
+                        rowMap.put("nombre", alumno.getNombre());
+                        rowMap.put("curso", alumno.getCurso());
+                        result.add(rowMap);
+                    }
+                } else {
+                    // Handle scalar results (single column)
+                    for (Object value : resultList) {
+                        Map<String, String> rowMap = new HashMap<>();
+                        rowMap.put("result", value != null ? value.toString() : "null");
+                        result.add(rowMap);
+                    }
                 }
-                result.add(rowMap);
             }
             
             return result;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Error executing native query: " + e.getMessage(), e);
+            throw new RuntimeException("Error executing query: " + e.getMessage(), e);
         } finally {
             em.close();
         }
@@ -98,32 +151,42 @@ public class AlumnoDAO {
         List<String> columnNames = new ArrayList<>();
         
         try {
-            String selectPart = sql.toUpperCase().substring(
-                sql.toUpperCase().indexOf("SELECT") + 6,
-                sql.toUpperCase().indexOf("FROM")
-            ).trim();
+            String upperSql = sql.toUpperCase();
+            int selectIndex = upperSql.indexOf("SELECT");
+            int fromIndex = upperSql.indexOf("FROM");
             
-            // Simple case: SELECT * FROM table
-            if (selectPart.equals("*")) {
-                // For * queries, we'll use generic column names
-                return columnNames; // Will be handled by the caller
-            }
-            
-            // Handle regular SELECT col1, col2 FROM table
-            String[] cols = selectPart.split(",");
-            for (String col : cols) {
-                col = col.trim();
+            if (selectIndex >= 0 && fromIndex > selectIndex) {
+                String selectPart = sql.substring(selectIndex + 6, fromIndex).trim();
                 
-                // Handle "AS" alias
-                if (col.toUpperCase().contains(" AS ")) {
-                    col = col.substring(col.toUpperCase().indexOf(" AS ") + 4).trim();
-                } else {
-                    // Get the last part after any dots or spaces
-                    String[] parts = col.split("\\s+|\\.");
-                    col = parts[parts.length - 1];
+                // Simple case: SELECT * FROM table
+                if (selectPart.equals("*")) {
+                    // For * queries, we'll use generic column names
+                    return columnNames; // Will be handled by the caller
                 }
                 
-                columnNames.add(col);
+                // Handle regular SELECT col1, col2 FROM table
+                String[] cols = selectPart.split(",");
+                for (String col : cols) {
+                    col = col.trim();
+                    
+                    // Handle "AS" alias
+                    if (col.toUpperCase().contains(" AS ")) {
+                        col = col.substring(col.toUpperCase().indexOf(" AS ") + 4).trim();
+                    } else {
+                        // Get the last part after any dots or spaces
+                        String[] parts = col.split("\\s+|\\.");
+                        col = parts[parts.length - 1];
+                    }
+                    
+                    // Remove any surrounding quotes or backticks
+                    if ((col.startsWith("\"") && col.endsWith("\"")) || 
+                        (col.startsWith("`") && col.endsWith("`")) || 
+                        (col.startsWith("'") && col.endsWith("'"))) {
+                        col = col.substring(1, col.length() - 1);
+                    }
+                    
+                    columnNames.add(col);
+                }
             }
             
             return columnNames;

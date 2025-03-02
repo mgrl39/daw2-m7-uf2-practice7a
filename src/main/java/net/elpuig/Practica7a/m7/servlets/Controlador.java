@@ -3,6 +3,7 @@ package net.elpuig.Practica7a.m7.servlets;
 import net.elpuig.Practica7a.m7.enums.Protocol;
 import net.elpuig.Practica7a.m7.beans.Alumno;
 import net.elpuig.Practica7a.m7.beans.Usuario;
+import net.elpuig.Practica7a.m7.jpa.AlumnoDAO;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,7 +22,7 @@ import java.util.Set;
 @WebServlet("/Controlador")
 public class Controlador extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final Set<String> ORDENES_VALIDAS = Set.of("ejecutar", "info", "desconectar");
+	private static final Set<String> ORDENES_VALIDAS = Set.of("ejecutar", "info", "desconectar", "informe");
 	private PrintWriter out;
 
 	@Override
@@ -63,6 +64,9 @@ public class Controlador extends HttpServlet {
 		case "ejecutar":
 			procesarConsultaSQL(request, response);
 			break;
+		case "informe":
+			procesarInforme(request, response);
+			break;
 		default:
 			out.println(webFormatter("operacion invalida", Protocol.GET));
 			out.println("<a href='home'>Ir a la pantalla inicial</a>");
@@ -74,7 +78,7 @@ public class Controlador extends HttpServlet {
 		return operacion != null && ORDENES_VALIDAS.contains(operacion.toLowerCase());
 	}
 
-	// ‘infosesion.jsp’ no hace nada extraño, sencillamente dibuja una tabla y
+	// 'infosesion.jsp' no hace nada extraño, sencillamente dibuja una tabla y
 	// muestra los valores deseados de la sesión.
 	private void procesarInfo(HttpServletRequest request, HttpServletResponse response, HttpSession session)
 			throws ServletException, IOException {
@@ -94,6 +98,18 @@ public class Controlador extends HttpServlet {
 		contexto.setAttribute("usuariosConectados", usuariosConectados != null ? usuariosConectados : 0);
 		contexto.setAttribute("usuariosValidados", usuariosValidados != null ? usuariosValidados : 0);
 		request.getRequestDispatcher("info").forward(request, response);
+	}
+
+	private void procesarInforme(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// Obtener la lista de alumnos de JPA
+		List<Alumno> listaAlumnos = AlumnoDAO.getAllAlumnos();
+		
+		// Guardar la lista en la request para que esté disponible en el servlet de reportes
+		request.setAttribute("lista", listaAlumnos);
+		
+		// Redirigir al servlet de informes
+		request.getRequestDispatcher("/informe").forward(request, response);
 	}
 
 	private void procesarConsultaSQL(HttpServletRequest request, HttpServletResponse response)
@@ -161,8 +177,8 @@ public class Controlador extends HttpServlet {
 	private static String webFormatter(String msg, Protocol p) {
 		String style;
 		style = "<html><body style=\"background-color:#ffff9d\"><center><h1 style=\"color:#00007e\">";
-		style += p == Protocol.GET ? "Usa JDBC para recuperar registros de una tabla"
-				: "Usa JDBC para grabar un registro en una tabla";
+		style += p == Protocol.GET ? "Usa JPA para recuperar registros de una tabla"
+				: "Usa JPA para grabar un registro en una tabla";
 		style += "</h1></center><hr style=\"color:#00007e\">";
 		style += "<p style=\"color:#00007e\">" + msg + "</p></body></html>";
 		return (style);
@@ -198,9 +214,6 @@ public class Controlador extends HttpServlet {
 		} else if ("validar".equalsIgnoreCase(operacion)) {
 			String user = validarUsuario(request.getParameter("txtUsuario"), request.getParameter("txtContrasenya"));
 			if (user == null) {
-				String sesAlumnoID = (String) session.getAttribute("sesAlumnoID");
-				String sesAlumnoNombre = (String) session.getAttribute("sesAlumnoNombre");
-				String sesAlumnoCurso = (String) session.getAttribute("sesAlumnoCurso");
 				request.getRequestDispatcher("error").forward(request, response);
 			} else {
 				Usuario usuario = new Usuario(user);
@@ -242,7 +255,7 @@ public class Controlador extends HttpServlet {
 				out.println(webFormatter("Todos los campos son obligatorios", Protocol.POST));
 				return;
 			}
-			Alumno nuevoAlumno = new Alumno(Integer.parseInt(idStr), curso, nombre);
+			Alumno nuevoAlumno = new Alumno(Integer.parseInt(idStr), nombre, curso);
 			out.println(
 					webFormatter(nuevoAlumno.save() ? "Alumno añadido" : "Error al añadir el alumno", Protocol.POST));
 			out.println("<a href='home'>Ir a la pantalla inicial</a>");
@@ -258,7 +271,7 @@ public class Controlador extends HttpServlet {
 	private void incrementarContadorSesion(HttpSession sesion) {
 
 		// Variable para guardar las veces que accede el usuario
-		Integer contadorAccesos = new Integer(0);
+		Integer contadorAccesos = Integer.valueOf(0);
 
 		// Si ya existe la sesion...
 		if (!sesion.isNew()) {
@@ -266,7 +279,7 @@ public class Controlador extends HttpServlet {
 			Integer contadorActual = (Integer) sesion.getAttribute("contadorAccesos");
 			// Incrementarlo
 			if (contadorActual != null) {
-				contadorAccesos = new Integer(contadorActual.intValue() + 1);
+				contadorAccesos = Integer.valueOf(contadorActual.intValue() + 1);
 			}
 		}
 		// Guardar el nuevo valor del contador
@@ -285,5 +298,4 @@ public class Controlador extends HttpServlet {
 		}
 		return retorno;
 	}
-
 }
