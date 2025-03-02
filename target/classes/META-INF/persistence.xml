@@ -1,0 +1,16 @@
+<persistence xmlns="http://jakarta.ee/xml/ns/persistence" version="3.0">
+    <persistence-unit name="AlumnosPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>net.elpuig.Practica7a.m7.beans.Alumno</class>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://10.103.252.238:3306/dbalumnos"/>
+            <property name="jakarta.persistence.jdbc.user" value="mp7"/>
+            <property name="jakarta.persistence.jdbc.password" value="secreto"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
+            <property name="eclipselink.logging.level" value="FINE"/>
+        </properties>
+    </persistence-unit>
+</persistence>
+
