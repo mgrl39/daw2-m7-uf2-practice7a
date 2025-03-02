@@ -1,10 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app
-    version="4.0"
-    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-    xmlns:javaee="http://xmlns.jcp.org/xml/ns/javaee"
-    xmlns:xml="http://www.w3.org/XML/1998/namespace"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
-  <display-name>Archetype Created Web Application</display-name>
+<web-app version="4.0"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:javaee="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+	<display-name>Practica7a - Archetype Created Web Application</display-name>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<servlet>
+		<servlet-name>Servlet</servlet-name>
+		<servlet-class>net.elpuig.Practica7a.m7.servlets.Controlador</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Servlet</servlet-name>
+		<url-pattern>*.go</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>Report</servlet-name>
+		<servlet-class>net.elpuig.Practica7a.m7.servlets.Report</servlet-class>
+		<async-supported>true</async-supported>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Report</servlet-name>
+		<url-pattern>/informe</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>net.sf.jasperreports.j2ee.servlets.ImageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>/image</url-pattern>
+	</servlet-mapping>
+	<listener>
+		<listener-class>net.elpuig.Practica7a.m7.webses.WebSessionListener</listener-class>
+	</listener>
+	<session-config>
+		<session-timeout>15</session-timeout>
+	</session-config>
+	<servlet>
+		<servlet-name>HomeAlias</servlet-name>
+		<jsp-file>/index.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>HomeAlias</servlet-name>
+		<url-pattern>/home</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ErrorAlias</servlet-name>
+		<jsp-file>/error.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ErrorAlias</servlet-name>
+		<url-pattern>/error</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AccesoAlias</servlet-name>
+		<jsp-file>/acceso.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AccesoAlias</servlet-name>
+		<url-pattern>/login</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>InfoAlias</servlet-name>
+		<jsp-file>/infosesion.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>InfoAlias</servlet-name>
+		<url-pattern>/info</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ConsultaAlias</servlet-name>
+		<jsp-file>/consulta.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ConsultaAlias</servlet-name>
+		<url-pattern>/consulta</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ResultadoAlias</servlet-name>
+		<jsp-file>/resultado.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ResultadoAlias</servlet-name>
+		<url-pattern>/result</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DesconectadoAlias</servlet-name>
+		<jsp-file>/desconectado.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DesconectadoAlias</servlet-name>
+		<url-pattern>/logout</url-pattern>
+	</servlet-mapping>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/lost.jsp</location>
+	</error-page>
 </web-app>
