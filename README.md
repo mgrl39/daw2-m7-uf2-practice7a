@@ -96,7 +96,7 @@ SELECT id FROM alumnos AS A;  -- También funciona en SQL
 ---
 
 ## 🔎 Conclusión
-🔹 **JPQL es case-sensitive con alias porque sigue la convención de Java.**  
+�� **JPQL es case-sensitive con alias porque sigue la convención de Java.**  
 🔹 **Si defines `a` en `SELECT a FROM Alumno a`, debes usar `a` en toda la consulta.**  
 🔹 **JPQL NO se comporta como SQL, donde los alias pueden no ser case-sensitive.**  
 
@@ -144,4 +144,11 @@ SELECT a FROM Alumnos a  // ❌ Error: "Alumnos" no existe como entidad
 ```
 
 💡 **Solución:** Siempre usa el nombre de la entidad de Java en JPQL. Si tu clase se llama `Alumno`, usa `Alumno`, no `alumnos` ni `Alumnos`. 🚀
+
+---
+## 📌 3. Compilar nuevo Jasper
+Cambia la ruta a la que necesites. También hace falta modificación del código dentro de la clase.
+```java
+cd /home/usuario/eclipse-workspace/Practica7a && mvn compile exec:java -Dexec.mainClass="net.elpuig.Practica7a.m7.util.JasperCompiler"
+```
 
