@@ -11,8 +11,7 @@
 	<packaging>war</packaging>
 
 	<name>Practica7a Maven Webapp</name>
-	<!-- FIXME change it to the project's website -->
-	<url>http://www.example.com</url>
+	<url>http://www.github.com/mgrl39</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,7 +37,7 @@
 			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Implementación de JSTL (esta es la que te falta) -->
+		<!-- Implementación de JSTL -->
 		<dependency>
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
