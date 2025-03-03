@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncEvent;
@@ -38,7 +39,7 @@ private static final long serialVersionUID = 1L;
 protected void service(HttpServletRequest request, HttpServletResponse response)
 throws ServletException, IOException {
 final AsyncContext ctxAsincrono = request.startAsync();
-ctxAsincrono.setTimeout(10_0000); // 10 segundos como maximo para generar el report
+ctxAsincrono.setTimeout(10_0000); // 10 segundos como máximo para generar el report
 
 ctxAsincrono.addListener(new AsyncListener() {
 public void onComplete(AsyncEvent event) throws IOException {
@@ -68,10 +69,16 @@ JasperReport jasperReport = (JasperReport) JRLoader
 .loadObject(new File(informeCompilado.getPath()));
 
 // Recuperar la lista de alumnos de la solicitud o cargarla si no existe
-@SuppressWarnings("unchecked")
 Collection<Alumno> listaAlumnos;
-if (request.getAttribute("lista") != null) {
-    listaAlumnos = (Collection<Alumno>) request.getAttribute("lista");
+Object listaObj = request.getAttribute("lista");
+if (listaObj instanceof Collection<?>) {
+    Collection<?> tempCollection = (Collection<?>) listaObj;
+    boolean allElementsAreAlumno = tempCollection.stream().allMatch(element -> element instanceof Alumno);
+    if (allElementsAreAlumno) {
+        listaAlumnos = tempCollection.stream().map(element -> (Alumno) element).collect(Collectors.toList());
+    } else {
+        throw new IllegalArgumentException("The collection does not contain only Alumno objects.");
+    }
 } else {
     // Si no hay lista en la request, obtenemos todos los alumnos
     listaAlumnos = Alumno.load();
@@ -84,7 +91,7 @@ JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listaAlum
 JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<>(0), dataSource);
 
 /*
-* Ahora ejecutamos un metodo especifico segun el informe que haya seleccionado
+* Ahora ejecutamos un método específico según el informe que haya seleccionado
 * el usuario
 */
 // Obtener el tipo de informe seleccionado por el usuario

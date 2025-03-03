@@ -1,0 +1,10 @@
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/elpuig/Practica7a/m7/beans/Alumno.java
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/elpuig/Practica7a/m7/beans/Usuario.java
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/elpuig/Practica7a/m7/enums/Protocol.java
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/elpuig/Practica7a/m7/jpa/JPAUtil.java
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/elpuig/Practica7a/m7/servlets/Controlador.java
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/elpuig/Practica7a/m7/servlets/Login.java
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/elpuig/Practica7a/m7/servlets/Report.java
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/elpuig/Practica7a/m7/util/JasperCompiler.java
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/elpuig/Practica7a/m7/webses/WebSessionListener.java
+/home/usuario/eclipse-workspace/Practica7a/src/main/java/net/jasperreports/j2ee/servlets/ImageServlet.java
