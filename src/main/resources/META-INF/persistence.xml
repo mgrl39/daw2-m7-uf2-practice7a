@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+    <persistence-unit name="AlumnosJPA" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>net.elpuig.Practica7a.m7.beans.Alumno</class>
+        <properties>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://10.103.252.238:3306/dbalumnos" />
+            <property name="jakarta.persistence.jdbc.user" value="mp7" />
+            <property name="jakarta.persistence.jdbc.password" value="secreto" />
+            <property name="eclipselink.logging.level" value="INFO" />
+            <!-- Enable if you want to auto-create tables -->
+            <!-- <property name="eclipselink.ddl-generation" value="create-tables" /> -->
+        </properties>
+    </persistence-unit>
+</persistence>

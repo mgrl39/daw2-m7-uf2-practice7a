@@ -30,6 +30,13 @@ h3 {
 .decisio {
 	color: white;
 }
+
+.help-text {
+	color: #FFFF99;
+	font-style: italic;
+	margin-top: 5px;
+	display: block;
+}
 </style>
 </head>
 <body>
@@ -40,9 +47,10 @@ h3 {
 	<hr>
 	<br>
 	<form action="Controlador" method="get">
-		<label for="sql">Consulta</label> <input id="sql" name="sql" required
-			value="SELECT * FROM alumnos;"> <input type="submit"
-			name="operacion" value="Ejecutar">
+		<label for="sql">Consulta JPQL</label> <input id="sql" name="sql" required
+			value="SELECT a FROM Alumno a">
+		<span class="help-text">Use consultas JPQL, no SQL. Ejemplo: "SELECT a FROM Alumno a"</span>
+		<input type="submit" name="operacion" value="Ejecutar">
 		<h3>OPCIONES</h3>
 		<br> <label>Técnica JSTL en resultados consulta</label> <input
 			name="jstl" value="true" type="radio"> <span class="decisio">Si</span>
